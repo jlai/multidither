@@ -1,0 +1,96 @@
+<html>
+  <head>
+    <script src="libs/tapmodo-Jcrop-1902fbc/js/jquery.min.js"></script>
+    <script src="libs/tapmodo-Jcrop-1902fbc/js/jquery.color.js"></script>
+    <script src="libs/tapmodo-Jcrop-1902fbc/js/jquery.Jcrop.min.js"></script>
+    <script src="libs/jsmanipulate.min.js"></script>
+    <script src="libs/handlebars-v3.0.0.js"></script>
+    <script src="libs/lodash.min.js"></script>
+    <script src="libs/rgbquant.js"></script>
+    <link rel="stylesheet" href="libs/tapmodo-Jcrop-1902fbc/css/jquery.Jcrop.min.css" />
+    <link rel="stylesheet" href="libs/bootstrap-3.3.2-dist/css/bootstrap.min.css" />
+    <script src="render.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+      .thumbnail { background-color: black; }
+      #left {
+        padding-bottom: 1em;
+        overflow: auto;
+      }
+      #dither-settings > input { margin-bottom: 0.5em; }
+      #dither-settings > label { margin-right: 0.5em; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div id="left" class="col-sm-4">
+          <div>
+            <h4>Select a file:</h4>
+            <input id="filepicker" type="file" accept="image/*">
+          </div>
+          <div style="margin-bottom: 2em">
+            <h4>Select area to crop:</h4>
+            <img id="crop" src="Blumenschmuck.jpg">
+          </div>
+          <ul id="settings" class="list-group">
+            <li id="dither-settings" class="list-group-item">
+              <label for="dither-threshold">Dither color threshold <span id="delta-percent"></span></label>
+              <input id="dither-threshold" type="range" min="0.0" max="20.0"
+                     step="0.05" value="0.0">
+
+              <input type="checkbox" id="dither-serp" onchange="render()">
+              <label for="dither-serp">Serpentine</label>
+
+              <input type="checkbox" id="dither-bw" onchange="render()">
+              <label for="dither-bw">Black &amp; White</label>
+            </li>
+            <script id="filters-template" type="text/x-handlebars-template">
+              {{#each filters}}
+              <li class="list-group-item">
+                {{#each params}}
+                <label for="{{../type}}-{{param}}">{{desc}} =
+                  <span id="{{../type}}-{{param}}-number">{{default}}</span></label>
+                <input id="{{../type}}-{{param}}" type="range" min="{{min}}" max="{{max}}" step="0.05"
+                       value="{{default}}" onchange="updateFilterParam(this); return true;">
+                {{/each}}
+              </li>
+              {{/each}}
+            </script>
+          </ul>
+          <div>
+            <h3>Notes</h3>
+            <ul>
+              <li>Requires a modern browser.</li>
+              <li>PNG is not optimized for size. Use a tool like pngcrush to optimize result.</li>
+            </ul>
+            <h4>Credits</h4>
+            <ul>
+              <li><a href="https://github.com/leeoniya/RgbQuant.js/">RgbQuant by Leon Sorokin</a></li>
+              <li><a href="http://deepliquid.com/content/Jcrop.html">JCrop by Kelly Hallman and Deep Liquid Group</a></li>
+              <li><a href="http://joelb.me/jsmanipulate/">JSManipulate by Joel Besada</a></li>
+              <li><a href="https://commons.wikimedia.org/wiki/File:Blumenschmuck_Fr%C3%BChling.JPG">"Blumenschmuck Frühling" by 4028mdk09
+                (CC BY-SA 3.0 via Wikimedia Commons)</a></li>
+            </ul>
+          </div>
+        </div>
+        <div id="right" class="col-sm-8">
+          <div class="container-fluid">
+            <h4>Results (hover for details, right-click to save as uncompressed .png)</h4>
+            <div id="results" class="row">
+              <script id="results-template" type="text/x-handlebars-template">
+                {{#each ditherTypes}}
+                <div class="col-sm-4">
+                  <img id="{{this}}-result" class="thumbnail" alt="{{this}}" title="{{this}}">
+                </div>
+                {{/each}}
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
